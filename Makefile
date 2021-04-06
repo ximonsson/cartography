@@ -7,7 +7,7 @@ LDFLAGS = -lSDL2 -lGL -L./$(LIB)
 LIBRARY = $(LIB)/libmaprender.so
 
 
-all: maprender
+all: $(LIBRARY)
 
 $(LIBRARY): maprender.c
 	@mkdir -p $(LIB) $(BUILD)
@@ -16,11 +16,11 @@ $(LIBRARY): maprender.c
 
 interactive: examples/interactive/main.c $(LIBRARY)
 	@mkdir -p bin
-	$(CC) $(INCLUDES) -o bin/interactive -I./examples/interactive examples/interactive/main.c $(LDFLAGS) -lmaprender
+	$(CC) $(INCLUDES) $(CFLAGS) -o bin/interactive -I./examples/interactive examples/interactive/main.c $(LDFLAGS) -lmaprender
 
 imagewriter: examples/imagewriter/main.c $(LIBRARY)
 	@mkdir -p bin
-	$(CC) $(INCLUDES) -o bin/imagewriter -I./examples/imagewriter examples/imagewriter/main.c $(LDFLAGS) -lmaprender
+	$(CC) $(INCLUDES) $(CFLAGS) -o bin/imagewriter -I./examples/imagewriter examples/imagewriter/main.c $(LDFLAGS) -lmaprender
 
 examples: interactive imagewriter
 
