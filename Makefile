@@ -4,19 +4,25 @@ INCLUDES = -I./include
 BUILD = build
 LIB = lib
 LDFLAGS = -lSDL2 -lGL -L./$(LIB)
-OUTPUT = $(LIB)/libmaprender.so
+LIBRARY = $(LIB)/libmaprender.so
 
 
 all: maprender
 
-maprender: maprender.c
-	mkdir -p $(LIB) $(BUILD)
-	$(CC) $(CFLAGS) $(INCLUDES) -fPIC -c -o $(BUILD)/$@.o $^
-	$(CC) -shared $(BUILD)/$@.o -o $(LIB)/lib$@.so $(LDFLAGS)
+$(LIBRARY): maprender.c
+	@mkdir -p $(LIB) $(BUILD)
+	$(CC) $(CFLAGS) $(INCLUDES) -fPIC -c -o $(BUILD)/maprender.o $^
+	$(CC) -shared $(BUILD)/maprender.o -o $(LIBRARY) $(LDFLAGS)
 
-example: example/main.c $(OUTPUT)
-	mkdir -p bin
-	$(CC) $(INCLUDES) -o bin/map -I./example example/main.c $(LDFLAGS) -lmaprender
+interactive: examples/interactive/main.c $(LIBRARY)
+	@mkdir -p bin
+	$(CC) $(INCLUDES) -o bin/interactive -I./examples/interactive examples/interactive/main.c $(LDFLAGS) -lmaprender
+
+imagewriter: examples/imagewriter/main.c $(LIBRARY)
+	@mkdir -p bin
+	$(CC) $(INCLUDES) -o bin/imagewriter -I./examples/imagewriter examples/imagewriter/main.c $(LDFLAGS) -lmaprender
+
+examples: interactive imagewriter
 
 clean:
 	rm build/*
