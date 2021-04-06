@@ -174,7 +174,7 @@ static size_t ways_n_primary;
 static size_t ways_n_secondary;
 static size_t ways_n_tertiary;
 
-void map_load_nodes (float* nodes, size_t n)
+void map_load_way_nodes (float* nodes, size_t n)
 {
 	glBindBuffer (GL_ARRAY_BUFFER, vbo_nodes);
 	glBufferData (GL_ARRAY_BUFFER, n * 2 * sizeof (GLfloat), nodes, GL_STATIC_DRAW);

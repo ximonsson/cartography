@@ -3,7 +3,7 @@
 /**
  * map_load_nodes loads all the nodes into the vertex buffer ready for rendering.
  */
-void map_load_nodes (float* nodes, size_t n) ;
+void map_load_way_nodes (float* nodes, size_t n) ;
 
 /**
  * map_load_primary_ways loads the primary ways.
