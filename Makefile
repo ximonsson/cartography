@@ -3,7 +3,7 @@ CFLAGS = -DGL_GLEXT_PROTOTYPES -O3
 INCLUDES = -I./include
 BUILD = build
 LIB = lib
-LDFLAGS = -lSDL2 -lGL -L./$(LIB)
+LDFLAGS = -lGL -L./$(LIB)
 LIBRARY = $(LIB)/libmaprender.so
 
 
@@ -16,11 +16,11 @@ $(LIBRARY): maprender.c
 
 interactive: examples/interactive/main.c $(LIBRARY)
 	@mkdir -p bin
-	$(CC) $(INCLUDES) $(CFLAGS) -o bin/interactive -I./examples/interactive examples/interactive/main.c $(LDFLAGS) -lmaprender
+	$(CC) $(INCLUDES) $(CFLAGS) -o bin/interactive -I./examples/interactive examples/interactive/main.c $(LDFLAGS) -lmaprender -lSDL2
 
 imagewriter: examples/imagewriter/main.c $(LIBRARY)
 	@mkdir -p bin
-	$(CC) $(INCLUDES) $(CFLAGS) -o bin/imagewriter -I./examples/imagewriter examples/imagewriter/main.c $(LDFLAGS) -lmaprender
+	$(CC) $(INCLUDES) $(CFLAGS) -o bin/imagewriter -I./examples/imagewriter examples/imagewriter/main.c $(LDFLAGS) -lmaprender -lpng
 
 examples: interactive imagewriter
 
