@@ -1,2 +1,5 @@
 # cartography
-Rendering maps
+
+Rendering maps.
+
+![vix](img/vix.png)
