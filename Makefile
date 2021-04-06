@@ -7,7 +7,7 @@ LDFLAGS = -lSDL2 -lGL -L./$(LIB)
 LIBRARY = $(LIB)/libmaprender.so
 
 
-all: maprender
+all: $(LIBRARY)
 
 $(LIBRARY): maprender.c
 	@mkdir -p $(LIB) $(BUILD)
