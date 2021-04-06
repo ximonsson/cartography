@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 /**
- * map_load_nodes loads all the nodes into the vertex buffer ready for rendering.
+ * map_load_way_nodes loads all the nodes into the vertex buffer ready for rendering.
  */
 void map_load_way_nodes (float* nodes, size_t n) ;
 
@@ -37,6 +37,21 @@ void map_load_secondary_ways (int* way_idx, int* way_size, size_t m) ;
  *		- m is the total number of ways in `way_idx` and `way_size`.
  */
 void map_load_tertiary_ways (int* way_idx, int* way_size, size_t m) ;
+
+/**
+ * map_load_building nodes loads nodes that are associated to building.
+ */
+void map_load_building_nodes (float* nodes, size_t n) ;
+
+/**
+ * map_load_buildings loads buildings.
+ *
+ * These are defined by their index and count within the nodes loaded using
+ * `map_load_building_nodes`.
+ *
+ * `n` is the number of buildings that are defined.
+ */
+void map_load_buildings (int *indices, int *counts, size_t n);
 
 /**
  * map_init initializes the map renderer to the given size in pixels.

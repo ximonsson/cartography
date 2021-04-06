@@ -9,10 +9,14 @@
 #include <GL/glext.h>
 #include "nodes.c"
 #include "ways.c"
+#include "buildings.c"
+#include "building_nodes.c"
 
 #define W 1000
 #define H 1000
 #define NWAYS 28663
+#define NBUILDINGS 92010
+#define NBNODES 821445
 #define NNODES 167123
 #define OX -40.497
 #define OY -20.516
@@ -116,10 +120,14 @@ int main ()
 {
 	init_win (W, H);
 	map_init (W, H);
+
 	map_load_way_nodes (vitoria_nodes, NNODES);
-	map_load_primary_ways (way_idx, way_counts, 5000);
-	map_load_secondary_ways (way_idx + 5000, way_counts + 5000, 5000);
-	map_load_tertiary_ways (way_idx + 10000, way_counts + 10000, NWAYS - 10000);
+	//map_load_primary_ways (way_idx, way_counts, 5000);
+	//map_load_secondary_ways (way_idx + 5000, way_counts + 5000, 5000);
+	map_load_tertiary_ways (way_idx, way_counts, NWAYS);
+
+	map_load_building_nodes (vitoria_building_nodes, NBNODES);
+	map_load_buildings (vix_buildings_i, vix_buildings_c, NBUILDINGS);
 
 	int done = 0;
 	while (!done)

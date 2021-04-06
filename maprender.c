@@ -131,8 +131,8 @@ static int compile_shaders ()
 }
 
 static GLuint tex;
-static GLuint vbo_nodes;
-static GLuint vbo_tex;
+static GLuint vbo_way_nodes;
+static GLuint vbo_building_nodes;
 static GLuint color;
 static GLuint vx;
 static GLuint vxo;
@@ -147,20 +147,25 @@ int map_init (int w_, int h_)
 	if (compile_shaders () != 0)
 		return 1;
 
-	// generate vertex buffer for vertices and texture coords
-	glGenBuffers (1, &vbo_nodes);
-	glGenBuffers (1, &vbo_tex);
-
+	// inputs to shaders
 	vx = glGetAttribLocation (program, "vertex");
 	color = glGetAttribLocation (program, "color_in");
 	vxo = glGetAttribLocation (program, "o");
 	vxd = glGetAttribLocation (program, "d");
+
+	// generate vertex buffer for vertices
+	glGenBuffers (1, &vbo_way_nodes);
+	glGenBuffers (1, &vbo_building_nodes);
 
 	// viewport
 	w = w_, h = h_;
 
 	return 0;
 }
+
+/*
+ * Ways
+ */
 
 static int* ways_idx_primary;
 static int* ways_idx_secondary;
@@ -176,7 +181,7 @@ static size_t ways_n_tertiary;
 
 void map_load_way_nodes (float* nodes, size_t n)
 {
-	glBindBuffer (GL_ARRAY_BUFFER, vbo_nodes);
+	glBindBuffer (GL_ARRAY_BUFFER, vbo_way_nodes);
 	glBufferData (GL_ARRAY_BUFFER, n * 2 * sizeof (GLfloat), nodes, GL_STATIC_DRAW);
 }
 
@@ -206,8 +211,43 @@ static void draw_highways (GLint* way_idx, GLsizei* way_size, GLsizei n)
 	for (int i = 0; i < n; i += N_WAYS_DRAW)
 		glMultiDrawArrays (GL_LINE_STRIP, way_idx + i, way_size + i, N_WAYS_DRAW);
 
-	int reset = n % N_WAYS_DRAW;
-	glMultiDrawArrays (GL_LINE_STRIP, way_idx + n - reset, way_size + n - reset, n % N_WAYS_DRAW);
+	int i = n - (n % N_WAYS_DRAW);
+	glMultiDrawArrays (GL_LINE_STRIP, way_idx + i, way_size + i, n % N_WAYS_DRAW);
+}
+
+/*
+ * Buildings.
+ */
+
+static int* buildings_idx; // indices
+static int* buildings_size; // counts
+static size_t buildings_n; // total number of buildings
+
+void map_load_building_nodes (float *nodes, size_t n)
+{
+	glBindBuffer (GL_ARRAY_BUFFER, vbo_building_nodes);
+	glBufferData (GL_ARRAY_BUFFER, n * 2 * sizeof (float), nodes, GL_STATIC_DRAW);
+}
+
+void map_load_buildings (int *i, int *c, size_t n)
+{
+	buildings_idx = i;
+	buildings_size = c;
+	buildings_n = n;
+}
+
+static void draw_buildings ()
+{
+	for (int i = 0; i < buildings_n; i += N_WAYS_DRAW)
+		glMultiDrawArrays (GL_TRIANGLE_STRIP, buildings_idx + i, buildings_size + i, N_WAYS_DRAW);
+
+	int i = buildings_n - (buildings_n % N_WAYS_DRAW);
+	glMultiDrawArrays (
+		GL_TRIANGLE_STRIP,
+		buildings_idx + i,
+		buildings_size + i,
+		buildings_n % N_WAYS_DRAW
+	);
 }
 
 void map_draw (float origx, float origy, float view_width, float view_height)
@@ -217,12 +257,15 @@ void map_draw (float origx, float origy, float view_width, float view_height)
 	glClear (GL_COLOR_BUFFER_BIT);
 	glViewport (0, 0, w, h);
 
-	glBindBuffer (GL_ARRAY_BUFFER, vbo_nodes);
-	glEnableVertexAttribArray (vx);
-	glVertexAttribPointer (vx, 2, GL_FLOAT, 0, 0, 0);
-
 	glVertexAttrib2f (vxo, origx, origy);
 	glVertexAttrib2f (vxd, view_width, view_height);
+
+	glEnableVertexAttribArray (vx);
+
+	// ways
+
+	glBindBuffer (GL_ARRAY_BUFFER, vbo_way_nodes);
+	glVertexAttribPointer (vx, 2, GL_FLOAT, 0, 0, 0);
 
 	glVertexAttrib4f (color, 0.0, 1.0, 1.0, 1.0);
 	glLineWidth (1.);
@@ -232,9 +275,17 @@ void map_draw (float origx, float origy, float view_width, float view_height)
 	glLineWidth (1.);
 	draw_highways (ways_idx_secondary, ways_size_secondary, ways_n_secondary);
 
-	glVertexAttrib4f (color, 1.0, 1.0, 1.0, 1.0);
+	glVertexAttrib4f (color, 0.05, 0.25, 0.25, 1.0);
 	glLineWidth (1.);
 	draw_highways (ways_idx_tertiary, ways_size_tertiary, ways_n_tertiary);
+
+	// buildings
+
+	glVertexAttrib4f (color, 1.0, 1.0, 1.0, 1.0);
+	glBindBuffer (GL_ARRAY_BUFFER, vbo_building_nodes);
+	glVertexAttribPointer (vx, 2, GL_FLOAT, 0, 0, 0);
+
+	draw_buildings ();
 
 	glDisableVertexAttribArray (vx);
 }
