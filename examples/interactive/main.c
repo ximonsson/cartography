@@ -70,6 +70,14 @@ void destroy_win ()
 void handle_events (int* done)
 {
 	float delta = 0.01;
+
+	if (view_width < .01)
+		delta /= 100.;
+	else if (view_width < .05)
+		delta /= 20.;
+	else if (view_width < .1)
+		delta /= 5.;
+
 	static SDL_Event ev;
 	while (SDL_PollEvent (&ev))
 	{
@@ -99,10 +107,13 @@ void handle_events (int* done)
 					break;
 
 				case SDLK_j:
-					view_width -= delta;
-					view_height -= delta;
-					origx += delta / 2.;
-					origy += delta / 2.;
+					if (view_width > delta)
+					{
+						view_width -= delta;
+						view_height -= delta;
+						origx += delta / 2.;
+						origy += delta / 2.;
+					}
 					break;
 
 				case SDLK_k:
