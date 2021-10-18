@@ -1,6 +1,8 @@
 # cartography
 
-A library meant for rendering maps. It does not download or contain any data itself, this is something that is for the user to
+A library meant for rendering maps. It does not download or contain any data itself, this is something that is for the user to handle.
+
+This is still super duper work in progress, but the idea is to support rendering maps in a flexible and fast way that allows theming.
 
 ![vix](img/vix.png)
 
