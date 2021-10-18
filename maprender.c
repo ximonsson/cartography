@@ -4,7 +4,6 @@
 #include <GL/glext.h>
 #include <stdio.h>
 
-
 static void check_errors()
 {
 	GLenum e = glGetError ();
@@ -242,7 +241,8 @@ static void draw_buildings ()
 		glMultiDrawArrays (GL_TRIANGLE_STRIP, buildings_idx + i, buildings_size + i, N_WAYS_DRAW);
 
 	int i = buildings_n - (buildings_n % N_WAYS_DRAW);
-	glMultiDrawArrays (
+	glMultiDrawArrays
+	(
 		GL_TRIANGLE_STRIP,
 		buildings_idx + i,
 		buildings_size + i,
