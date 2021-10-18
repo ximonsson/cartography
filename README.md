@@ -1,6 +1,6 @@
 # cartography
 
-Rendering maps.
+A library meant for rendering maps. It does not download or contain any data itself, this is something that is for the user to
 
 ![vix](img/vix.png)
 
@@ -15,3 +15,13 @@ You start by loading all vertices that are part of the all the streets you want 
 * tertiary roads: `map_load_tertiary_ways`
 
 Each function takes as parameters an array of node indices (loaded through `map_load_nodes`) and a list of lengths, and last the number of ways that are being loaded (think `glMultiDrawArrays` here).
+
+## Examples
+
+This project is meant to be a library to compile into your own application. There are some examples on how you can create an application in `./examples`. You can run the following make command to compile the example applications:
+
+```sh
+make examples
+```
+
+This creates two applications but the one that works is `./bin/interactive` which will load some predefined data from openstreetmap and create an interactive application to look at the steets.
