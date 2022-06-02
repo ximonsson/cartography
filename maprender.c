@@ -210,9 +210,20 @@ static void draw_highways (GLint* way_idx, GLsizei* way_size, GLsizei n)
 	glMultiDrawArrays (GL_LINE_STRIP, way_idx + n - reset, way_size + n - reset, n % N_WAYS_DRAW);
 }
 
+GLfloat rec[4 * 3] = {
+	-1.0, -1.0, 0.,
+	-1.0, 1.0, 0.,
+	1.0, 1.0, 0.,
+	1.0, -1.0, 0.,
+}
+
 static void draw_highways_w (GLint* way_idx, GLsizei way_size, GLsizei n)
 {
-
+	// TODO duplicate tmp so it can be done in less calls
+	static int tmp[6] = { 0, 1, 2, 2, 1, 3 };
+	static int foo[1] = { 6 };
+	for (int i = 0; i < n; i ++)
+		glDrawArrays (GL_TRIANGLE_STRIP, 0, 6);
 }
 
 void map_draw (float origx, float origy, float view_width, float view_height)
