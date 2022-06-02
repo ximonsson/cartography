@@ -210,6 +210,11 @@ static void draw_highways (GLint* way_idx, GLsizei* way_size, GLsizei n)
 	glMultiDrawArrays (GL_LINE_STRIP, way_idx + n - reset, way_size + n - reset, n % N_WAYS_DRAW);
 }
 
+static void draw_highways_w (GLint* way_idx, GLsizei way_size, GLsizei n)
+{
+
+}
+
 void map_draw (float origx, float origy, float view_width, float view_height)
 {
 	glUseProgram (program);
