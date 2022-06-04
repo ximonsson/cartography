@@ -142,6 +142,15 @@ static GLuint vxd;
 
 static GLsizei w, h;
 
+GLfloat rec[4 * 2] = {
+	-1.0, -1.0,
+	-1.0, 1.0,
+	1.0, 1.0,
+	1.0, -1.0,
+};
+
+static GLuint ibo, vbo;
+
 int map_init (int w_, int h_)
 {
 	if (compile_shaders () != 0)
@@ -151,6 +160,9 @@ int map_init (int w_, int h_)
 	glGenBuffers (1, &vbo_nodes);
 	glGenBuffers (1, &vbo_tex);
 
+	glGenBuffers (1, &ibo);
+	glGenBuffers (1, &vbo);
+
 	vx = glGetAttribLocation (program, "vertex");
 	color = glGetAttribLocation (program, "color_in");
 	vxo = glGetAttribLocation (program, "o");
@@ -158,6 +170,9 @@ int map_init (int w_, int h_)
 
 	// viewport
 	w = w_, h = h_;
+
+	glBindBuffer (GL_ARRAY_BUFFER, vbo);
+	glBufferData (GL_ARRAY_BUFFER, 4 * 2 * sizeof (GLfloat), rec, GL_STATIC_DRAW);
 
 	return 0;
 }
@@ -210,20 +225,17 @@ static void draw_highways (GLint* way_idx, GLsizei* way_size, GLsizei n)
 	glMultiDrawArrays (GL_LINE_STRIP, way_idx + n - reset, way_size + n - reset, n % N_WAYS_DRAW);
 }
 
-GLfloat rec[4 * 3] = {
-	-1.0, -1.0, 0.,
-	-1.0, 1.0, 0.,
-	1.0, 1.0, 0.,
-	1.0, -1.0, 0.,
-}
-
-static void draw_highways_w (GLint* way_idx, GLsizei way_size, GLsizei n)
+static void draw_highways_wip (GLint* way_idx, GLsizei way_size, GLsizei n)
 {
-	// TODO duplicate tmp so it can be done in less calls
-	static int tmp[6] = { 0, 1, 2, 2, 1, 3 };
-	static int foo[1] = { 6 };
+	// TODO duplicate idx so it can be done in less calls
+	static GLuint idx[6] = { 0, 1, 2, 2, 3, 0 };
+	glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBufferData (GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof (GLuint), idx, GL_STATIC_DRAW);
+
+	//static int foo[1] = { 6 };
+
 	for (int i = 0; i < n; i ++)
-		glDrawArrays (GL_TRIANGLE_STRIP, 0, 6);
+		glDrawElements (GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 }
 
 void map_draw (float origx, float origy, float view_width, float view_height)
@@ -233,13 +245,17 @@ void map_draw (float origx, float origy, float view_width, float view_height)
 	glClear (GL_COLOR_BUFFER_BIT);
 	glViewport (0, 0, w, h);
 
-	glBindBuffer (GL_ARRAY_BUFFER, vbo_nodes);
+	glBindBuffer (GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray (vx);
 	glVertexAttribPointer (vx, 2, GL_FLOAT, 0, 0, 0);
 
 	glVertexAttrib2f (vxo, origx, origy);
 	glVertexAttrib2f (vxd, view_width, view_height);
 
+	glVertexAttrib4f (color, 0.0, 1.0, 1.0, 1.0);
+	draw_highways_wip (0, 0, 1);
+
+	/*
 	glVertexAttrib4f (color, 0.0, 1.0, 1.0, 1.0);
 	glLineWidth (1.);
 	draw_highways (ways_idx_primary, ways_size_primary, ways_n_primary);
@@ -251,6 +267,7 @@ void map_draw (float origx, float origy, float view_width, float view_height)
 	glVertexAttrib4f (color, 1.0, 1.0, 1.0, 1.0);
 	glLineWidth (1.);
 	draw_highways (ways_idx_tertiary, ways_size_tertiary, ways_n_tertiary);
+	*/
 
 	glDisableVertexAttribArray (vx);
 }
