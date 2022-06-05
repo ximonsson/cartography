@@ -149,7 +149,7 @@ GLfloat rec[4 * 2] = {
 	1.0, -1.0,
 };
 
-static GLuint ibo, vbo;
+static GLuint ibo, vbo, vxw;
 
 int map_init (int w_, int h_)
 {
@@ -167,6 +167,7 @@ int map_init (int w_, int h_)
 	color = glGetAttribLocation (program, "color_in");
 	vxo = glGetAttribLocation (program, "o");
 	vxd = glGetAttribLocation (program, "d");
+	vxw = glGetAttribLocation (program, "w");
 
 	// viewport
 	w = w_, h = h_;
@@ -232,8 +233,6 @@ static void draw_highways_wip (GLint* way_idx, GLsizei way_size, GLsizei n)
 	glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData (GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof (GLuint), idx, GL_STATIC_DRAW);
 
-	//static int foo[1] = { 6 };
-
 	for (int i = 0; i < n; i ++)
 		glDrawElements (GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 }
@@ -253,6 +252,7 @@ void map_draw (float origx, float origy, float view_width, float view_height)
 	glVertexAttrib2f (vxd, view_width, view_height);
 
 	glVertexAttrib4f (color, 0.0, 1.0, 1.0, 1.0);
+	glVertexAttrib1f (vxw, .005);
 	draw_highways_wip (0, 0, 1);
 
 	/*

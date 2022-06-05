@@ -3,8 +3,9 @@
 in vec2 vertex;
 in vec2 texture_coords_in;
 in vec4 color_in;
-in vec2 d;
-in vec2 o;
+in vec2 d; // distance ?
+in vec2 o; // origia
+in float w; // width of the road
 
 out vec2 texture_coords;
 out vec4 color;
@@ -32,8 +33,16 @@ void main ()
 		-o.x, -o.y, 0., 1.
 	);
 
+	//mat
+	mat4 tmp = mat4(
+		-w, 0., 0., 0.,
+		0., 1., 0., 0.,
+		0., 0., 1., 0,
+		0., 0., 0., 1.
+	);
+
 	//vec4 v = P * V * M * vec4 (vertex, 0., 1.);
-	vec4 v = vec4 (vertex, 0., 1.);
+	vec4 v = tmp * vec4 (vertex, 0., 1.);
 
 	gl_Position = v;
 	texture_coords = texture_coords_in;
